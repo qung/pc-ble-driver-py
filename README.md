@@ -39,14 +39,14 @@ please install the redistributable installer for [Visual Studio 2013](https://ww
 
 ## Compiling from source
 
-Before building pc-ble-driver-py you will need to have Boost installed and some of its libraries statically compiled.
-To install and compile Boost, please follow the instructions here:
+Before building pc-ble-driver-py you will need to have vcpkg installed and some of its libraries statically compiled.
+To install and compile vcpkg, please follow the instructions here:
 
-[Building Boost](https://github.com/NordicSemiconductor/pc-ble-driver/blob/master/Installation.md#building-boost)
+[Building vcpkg](https://github.com/Microsoft/vcpkg)
 
-Assuming that you have built the Boost libraries and installed the tools required to do so, you can now build and install the Python bindings and the accompanying shared library.
+Assuming that you have built the vcpkg libraries and installed the tools required to do so, you can now build and install the Python bindings and the accompanying shared library.
 
-**Note**: Make sure you have built the Boost libraries for the architecture (32 or 64-bit) required by your Python installation.
+**Note**: Make sure you have built the vcpkg libraries for the architecture (32 or 64-bit) required by your Python installation.
 
 ### Dependencies
 
@@ -76,71 +76,78 @@ SWIG in `c:\swig\swigwin-x.y.z`:
 
 * Install the latest Python 2 Release by downloading the installer from:
 
-[Python Windows Downloads](https://www.python.org/downloads/windows/)
+* This version intend to be compiled and tested with Python 3.6.5
 
-**Note**: Select the Python architecture (32 or 64-bit) that you plan to build for.
+## Compiling pc-ble-driver from source
 
-Install Microsoft Visual Studio. The following versions are supported:
+### Dependencies
 
-* Visual Studio 2015 (MSVC 14.0)
+To build this project you will need the following tools:
+
+* [CMake](https://cmake.org/) (>=3.11)
+* A C/C++ toolchain
+* [vcpkg](https://github.com/Microsoft/vcpkg)
+
+Install vcpkg as described [here](https://github.com/Microsoft/vcpkg).
+
+Add the vcpkg location to the PATH environment variable.
+
+See the following sections for platform-specific instructions on the installation of the dependencies.
+
+#### Windows 
+
+* Install the latest CMake stable release by downloading the Windows Installer from:
+
+[CMake Downloads](https://cmake.org/download/)
 
 Open a Microsoft Visual Studio Command Prompt and issue the following from the root folder of the repository:
 
+    > vcpkg install asio
+    > vcpkg install catch2
     > cd build
-    > cmake -G "Visual Studio XX <Win64>" <-DBOOST_LIBRARYDIR="<Boost libs path>>" ..
+    > cmake -G "Visual Studio 14 <Win64>" -DCMAKE_TOOLCHAIN_FILE=[vcpkg root]\scripts\buildsystems\vcpkg.cmake ..
     > msbuild ALL_BUILD.vcxproj </p:Configuration=<CFG>>
-
-**Note**: Select Visual Sutio 14 with the `-G "Visual Studio XX"` option.
 
 **Note**: Add `Win64` to the `-G` option to build a 64-bit version of the driver.
 
-**Note**: Optionally select the location of the Boost libraries with the `-DBOOST_LIBRARYDIR` option.
-
 **Note**: Optionally select the build configuration with the `/p:Configuration=` option. Typically `Debug`, `Release`, `MinSizeRel` and `RelWithDebInfo` are available.
-
-The results of the build will be placed in `build\outdir` and the distributable files will be copied to `python\pc_ble_driver_py\lib\win\x86_<arch>` and `python\pc_ble_driver_py\hex`.
 
 ##### Examples
 
-Building for 32-bit Python with 64-bit Visual Studio 15:
+Building for with 64-bit Visual Studio 2015:
 
-    > cmake -G "Visual Studio 14" ..
-
-Building for 64-bit Python with 64-bit Visual Studio 15 pointing to a 64-bit Boost build:
-
-    > cmake -G "Visual Studio 14 Win64" -DBOOST_LIBRARYDIR="c:\boost\boost_1_61_0\stage\x64" ..
+    > cmake -G "Visual Studio 14" -DCMAKE_TOOLCHAIN_FILE=[vcpkg root]\scripts\buildsystems\vcpkg.cmake ..
 
 #### Ubuntu Linux
 
-Install the required packages to build the bindings:
+Install cmake:
 
-    $ sudo apt-get install cmake swig libudev-dev python python-dev
+    $ sudo apt-get install cmake
 
 Then change to the root folder of the repository and issue the following commands:
 
     $ cd build
-    > cmake -G "Unix Makefiles" <-DCMAKE_BUILD_TYPE=<build_type>> <-DARCH=<x86_32,x86_64>> <-DBOOST_LIBRARYDIR="<Boost libs path>>" ..
+    $ vcpkg install asio
+    $ vcpkg install catch2
+    $ cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=[vcpkg root]/scripts/buildsystems/vcpkg.cmake <-DCMAKE_BUILD_TYPE=<build_type>> <-DARCH=<x86_32,x86_64>>" ..
     $ make
 
 **Note**: Optionally Select the build configuration with the `-DCMAKE_BUILD_TYPE` option. Typically `Debug`, `Release`, `MinSizeRel` and `RelWithDebInfo` are available.
 
 **Note**: Optionally select the target architecture (32 or 64-bit) using the `-DARCH` option.
 
-**Note**: Optionally select the location of the Boost libraries with the `-DBOOST_LIBRARYDIR` option.
-
-The results of the build will be placed in `build/outdir` and the distributable files will be copied to `python/pc_ble_driver_py/lib/linux\x86_<arch>` and `python\pc_ble_driver_py\hex`.
-
 #### macOS (OS X) 10.11 and later
 
-Install cmake and swig with Homebrew with the `brew` command on a terminal:
+Install cmake with Homebrew with the `brew` command on a terminal:
 
     $ brew install cmake
-    $ brew install swig
 
 Then change to the root folder of the repository and issue the following commands:
 
+    $ vcpkg install asio
+    $ vcpkg install catch2
     $ cd build
-    $ cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE= <build_type> ..
+    $ cmake -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=[vcpkg root]/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE= <build_type> ..
     $ make
 
 **Note**: Optionally Select the build configuration with the `-DCMAKE_BUILD_TYPE` option. Typically `Debug`, `Release`, `MinSizeRel` and `RelWithDebInfo` are available.

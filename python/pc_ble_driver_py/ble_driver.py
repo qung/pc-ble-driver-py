@@ -1216,6 +1216,7 @@ class BLEDriver(object):
     @NordicSemiErrorCheck
     @wrapt.synchronized(api_lock)
     def open(self):
+        driver.sd_rpc_log_handler_severity_filter_set(self.rpc_adapter, 0)
         return driver.sd_rpc_open(self.rpc_adapter,
                                   self.status_handler,
                                   self.ble_evt_handler,

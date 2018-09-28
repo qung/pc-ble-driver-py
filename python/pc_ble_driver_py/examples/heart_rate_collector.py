@@ -100,7 +100,9 @@ class HRCollector(BLEDriverObserver, BLEAdapterObserver):
             ble_driver.ble_gap_scan_start()
 
     def on_gap_evt_adv_report(self, ble_driver, conn_handle, peer_addr, rssi, adv_type, adv_data):
+
         dev_name_list = None
+
         if BLEAdvData.Types.complete_local_name in adv_data.records:
             dev_name_list = adv_data.records[BLEAdvData.Types.complete_local_name]
 
@@ -127,7 +129,8 @@ class HRCollector(BLEDriverObserver, BLEAdapterObserver):
         ble_driver.ble_gap_data_length_update(conn_handle, None, None)
 
     def on_gatts_evt_exchange_mtu_request(self, ble_driver, conn_handle, client_mtu):
-        ble_driver.ble_gatts_exchange_mtu_reply(conn_handle, 23)
+        #ble_driver.ble_gatts_exchange_mtu_reply(conn_handle, 23)
+        pass
 
 
 def main(serial_port):
